@@ -279,6 +279,9 @@
         .tab-container {
             display: flex;
             margin-bottom: 20px;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding-bottom: 10px;
         }
         
         .tab {
@@ -289,6 +292,7 @@
             transition: all 0.3s;
             margin-right: 5px;
             border-radius: 5px 5px 0 0;
+            flex-shrink: 0;
         }
         
         .tab.active {
@@ -326,17 +330,129 @@
             margin: 10px 0;
         }
         
-        @media (max-width: 768px) {
-            .result-grid {
-                grid-template-columns: 1fr;
+        /* Media Queries para Responsividad */
+        @media (max-width: 1200px) {
+            .container {
+                padding: 15px;
             }
             
-            .container {
-                padding: 10px;
+            h1 {
+                font-size: 2rem;
+                padding-bottom: 10px;
+            }
+            
+            h1::after {
+                width: 150px;
+            }
+            
+            .panel {
+                padding: 20px;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .result-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .visualization {
+                height: 400px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+                margin-bottom: 20px;
+            }
+            
+            h2 {
+                font-size: 1.2rem;
+                margin-bottom: 20px;
             }
             
             .panel {
                 padding: 15px;
+            }
+            
+            .form-group {
+                margin-bottom: 20px;
+            }
+            
+            label {
+                font-size: 1rem;
+            }
+            
+            input[type="text"], input[type="number"] {
+                padding: 12px;
+                font-size: 0.9rem;
+            }
+            
+            button {
+                padding: 12px 20px;
+                font-size: 1rem;
+            }
+            
+            .data-table th, .data-table td {
+                padding: 10px 8px;
+                font-size: 0.8rem;
+            }
+            
+            .summary-value {
+                font-size: 1.2rem;
+            }
+            
+            .tab {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            h1::after {
+                width: 100px;
+                height: 2px;
+            }
+            
+            .panel {
+                padding: 12px;
+            }
+            
+            .visualization {
+                height: 300px;
+            }
+            
+            .data-table th, .data-table td {
+                padding: 8px 6px;
+                font-size: 0.7rem;
+            }
+            
+            .summary-card {
+                padding: 15px;
+            }
+            
+            .summary-value {
+                font-size: 1rem;
+            }
+        }
+        
+        @media (max-width: 400px) {
+            h1 {
+                font-size: 1.3rem;
+            }
+            
+            .tab {
+                padding: 6px 12px;
+                font-size: 0.8rem;
+            }
+            
+            .visualization {
+                height: 250px;
             }
         }
     </style>
@@ -406,9 +522,9 @@
                                     <th>n</th>
                                     <th>xₙ</th>
                                     <th>yₙ</th>
-                                    <th>yₙ₊₁* (Predicción)</th>
+                                    <th>yₙ₊₁*</th>
                                     <th>xₙ₊₁</th>
-                                    <th>yₙ₊₁ (Corregido)</th>
+                                    <th>yₙ₊₁</th>
                                 </tr>
                             </thead>
                             <tbody id="tableBody"></tbody>
