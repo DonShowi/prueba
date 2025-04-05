@@ -1,29 +1,899 @@
+<!-- 
+╔══════════════════════════════════════════╗
+║  ██████  ██   ██  ██████  ██  ██  ██   ██ 
+   ██      ██   ██  ██  ██  ██  ██  ██   ██ 
+   ██████  ███████  ██  ██  ██  ██  ██   ██
+       ██  ██   ██  ██  ██  ██  ██  ██   ██
+   ██████  ██   ██  ██████  ██████████   ██
+╠══════════════════════════════════════════╣
+║ >>Versión 2.7 - 04/04/2025               ║
+║ >>Powered by: HTML,JavaScrip             ║
+╚══════════════════════════════════════════╝
+-->
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Página Sencilla</title>
+    <title>MÉTODO EULER MEJORADO | VERSIÓN CORREGIDA</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Exo+2:wght@300;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00f7ff;
+            --secondary: #ff00e4;
+            --dark: #0a0a20;
+            --light: #e0f8ff;
+            --accent: #ff5500;
+        }
+        
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 247, 255, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(255, 0, 228, 0.05) 0%, transparent 20%);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        h1, h2, h3 {
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px var(--primary), 0 0 20px rgba(0, 247, 255, 0.3);
+        }
+        
+        h1 {
+            color: var(--primary);
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        h1::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+        }
+        
+        .panel {
+            background: rgba(10, 10, 32, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 247, 255, 0.2);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .panel:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+        
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 247, 255, 0.3);
+            border-radius: 8px;
+            color: var(--light);
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        input[type="text"]:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(0, 247, 255, 0.3);
+        }
+        
+        button {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--dark);
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Orbitron', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 247, 255, 0.3);
+        }
+        
+        button::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 255, 255, 0.3) 0%,
+                rgba(255, 255, 255, 0) 60%
+            );
+            transform: rotate(30deg);
+            transition: all 0.3s;
+        }
+        
+        button:hover::before {
+            left: 100%;
+        }
+        
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .data-table th {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--dark);
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+        
+        .data-table td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid rgba(0, 247, 255, 0.1);
+            background: rgba(0, 0, 0, 0.2);
+        }
+        
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .data-table tr:hover td {
+            background: rgba(0, 247, 255, 0.1);
+        }
+        
+        .final-result {
+            background: rgba(255, 85, 0, 0.2) !important;
+            color: var(--accent) !important;
+            font-weight: bold;
+            position: relative;
+        }
+        
+        .final-result::after {
+            content: "★";
+            position: absolute;
+            right: 10px;
+            color: var(--accent);
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.3); }
+            100% { opacity: 0.5; transform: scale(1); }
+        }
+        
+        .visualization {
+            height: 500px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            border: 1px solid rgba(0, 247, 255, 0.2);
+        }
+        
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        
+        .error {
+            background: rgba(255, 0, 0, 0.2);
+            border-left: 4px solid #ff0000;
+        }
+        
+        .success {
+            background: rgba(0, 255, 0, 0.2);
+            border-left: 4px solid #00ff00;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .particle {
+            position: absolute;
+            background: var(--primary);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float linear infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-100vh) rotate(360deg); }
+        }
+        
+        .tab-container {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 247, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-right: 5px;
+            border-radius: 5px 5px 0 0;
+        }
+        
+        .tab.active {
+            background: rgba(0, 247, 255, 0.2);
+            border-bottom: 2px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        .summary-card {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .summary-card h3 {
+            margin-top: 0;
+            color: var(--primary);
+        }
+        
+        .summary-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--light);
+            margin: 10px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            .panel {
+                padding: 15px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>Bienvenido a mi página web</h1>
-    </header>
+    <div class="particles" id="particles"></div>
+    
+    <div class="container">
+        <h1>Método de Euler Mejorado</h1>
+        <h2 style="text-align: center; color: var(--secondary); margin-bottom: 40px;">Realizado por Emmanuel y Gabriel</h2>
+        
+        <div class="panel">
+            <div class="form-group">
+                <label for="equation">Ecuación Diferencial (f(x, y)):</label>
+                <input type="text" id="equation" value="x^2 + y^2" placeholder="Ejemplo: sin(x) + y^2" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="x0">Valor Inicial x₀:</label>
+                <input type="number" id="x0" step="any" value="0" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="y0">Valor Inicial y₀:</label>
+                <input type="number" id="y0" step="any" value="0" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="h">Tamaño del Paso (h):</label>
+                <input type="number" id="h" step="any" min="0.0001" value="0.1" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="xf">Valor Final Deseado (x<sub>f</sub>):</label>
+                <input type="number" id="xf" step="any" value="0.2" required>
+            </div>
+            
+            <button id="calculateBtn">Calcular Solución</button>
+        </div>
+        
+        <div id="errorMessage" class="status error"></div>
+        <div id="successMessage" class="status success"></div>
+        
+        <div id="resultContainer" style="display: none;">
+            <div class="panel">
+                <h2>Resultados del Método de Euler Mejorado</h2>
+                
+                <div class="summary-card">
+                    <h3>Resumen de la Solución</h3>
+                    <div class="summary-value" id="iterationsCount">0 iteraciones</div>
+                    <div class="summary-value" id="finalResult">y(<span id="finalX">0</span>) = <span id="finalY">0</span></div>
+                    <div id="errorEstimate">Error estimado: -</div>
+                </div>
+                
+                <div class="tab-container">
+                    <div class="tab active" data-tab="table">Tabla de Resultados</div>
+                    <div class="tab" data-tab="graph2d">Gráfica 2D</div>
+                    <div class="tab" data-tab="graph3d">Superficie 3D</div>
+                    <div class="tab" data-tab="comparison">Comparación</div>
+                </div>
+                
+                <div class="tab-content active" id="table-tab">
+                    <div style="overflow-x: auto;">
+                        <table class="data-table" id="resultsTable">
+                            <thead>
+                                <tr>
+                                    <th>n</th>
+                                    <th>xₙ</th>
+                                    <th>yₙ</th>
+                                    <th>yₙ₊₁* (Predicción)</th>
+                                    <th>xₙ₊₁</th>
+                                    <th>yₙ₊₁ (Corregido)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="graph2d-tab">
+                    <div class="visualization" id="graph2d"></div>
+                </div>
+                
+                <div class="tab-content" id="graph3d-tab">
+                    <div class="visualization" id="graph3d"></div>
+                </div>
+                
+                <div class="tab-content" id="comparison-tab">
+                    <div class="visualization" id="comparisonGraph"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+    
+        function createParticles() {
+            const container = document.getElementById('particles');
+            const particleCount = 30;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                const size = Math.random() * 5 + 2;
+                const posX = Math.random() * 100;
+                const delay = Math.random() * 10;
+                const duration = Math.random() * 20 + 10;
+                
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${posX}%`;
+                particle.style.bottom = `-${size}px`;
+                particle.style.animationDuration = `${duration}s`;
+                particle.style.animationDelay = `${delay}s`;
+                
+                container.appendChild(particle);
+            }
+        }
+        
+        createParticles();
+        
+   
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                tab.classList.add('active');
+                document.getElementById(`${tab.dataset.tab}-tab`).classList.add('active');
+            });
+        });
+        
 
-    <nav>
-        <ul>
-            <li><a href="#">Inicio</a></li>
-            <li><a href="#">Sobre mí</a></li>
-            <li><a href="#">Contacto</a></li>
-        </ul>
-    </nav>
+        document.getElementById('calculateBtn').addEventListener('click', function() {
+            console.log("Botón de calcular clickeado"); // Debug
+            
+            const x0 = parseFloat(document.getElementById('x0').value);
+            const y0 = parseFloat(document.getElementById('y0').value);
+            const h = parseFloat(document.getElementById('h').value);
+            const xf = parseFloat(document.getElementById('xf').value);
+            const equation = document.getElementById('equation').value;
+            
+            const errorElement = document.getElementById('errorMessage');
+            errorElement.style.display = 'none';
+            
+   
+            if (isNaN(x0)) {
+                showError('Por favor ingrese un valor numérico válido para x₀');
+                return;
+            }
+            
+            if (isNaN(y0)) {
+                showError('Por favor ingrese un valor numérico válido para y₀');
+                return;
+            }
+            
+            if (isNaN(h) || h <= 0) {
+                showError('El tamaño del paso (h) debe ser un número mayor que cero');
+                return;
+            }
+            
+            if (isNaN(xf) || xf <= x0) {
+                showError('El valor final debe ser un número mayor que el valor inicial x₀');
+                return;
+            }
+            
+            if (!equation || equation.trim() === "") {
+                showError('Por favor ingrese una ecuación diferencial válida');
+                return;
+            }
+            
+            let f;
+            try {
+                f = math.compile(equation);
+            
+                const testResult = f.evaluate({x: x0, y: y0});
+                if (isNaN(testResult)) {
+                    throw new Error("La ecuación devuelve NaN");
+                }
+            } catch (err) {
+                console.error("Error al compilar la ecuación:", err);
+                showError('La ecuación ingresada no es válida. Ejemplo: x^2 + sin(y)');
+                return;
+            }
+            
+    
+            const results = calculateImprovedEuler(x0, y0, h, xf, f);
+            console.log("Resultados calculados:", results); // Debug
+            
+            if (results.length === 0) {
+                showError('No se pudo calcular la solución. Verifique los parámetros e intente con un paso más pequeño.');
+                return;
+            }
+      
+            displayResults(results, equation);
+            visualizeResults(results, equation);
 
-    <main>
-        <section>
-            <h2>¿Quién soy?</h2>
-            <p>Esta es una página muy sencilla creada con HTML.</p>
-        </section>
+            showSuccess(`Solución calculada con éxito. ${results.length} iteraciones realizadas.`);
+        });
+        
+        function showError(message) {
+            const errorElement = document.getElementById('errorMessage');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+            
+            const successElement = document.getElementById('successMessage');
+            successElement.style.display = 'none';
+            
+            console.error("Error mostrado:", message); // Debug
+        }
+        
+        function showSuccess(message) {
+            const successElement = document.getElementById('successMessage');
+            successElement.textContent = message;
+            successElement.style.display = 'block';
+            
+            const errorElement = document.getElementById('errorMessage');
+            errorElement.style.display = 'none';
+            
+            console.log("Éxito mostrado:", message); // Debug
+        }
+        
+        function calculateImprovedEuler(x0, y0, h, xf, f) {
+            const results = [];
+            let n = 0;
+            let xn = x0;
+            let yn = y0;
+            
+            const evalF = (x, y) => {
+                try {
+                    return f.evaluate({x: x, y: y});
+                } catch (err) {
+                    console.error("Error al evaluar la ecuación:", err);
+                    return NaN;
+                }
+            };
+            
+            while (xn < xf - 0.000001) {
+                const slope1 = evalF(xn, yn);
+                if (isNaN(slope1)) break;
+                
+                const yPred = yn + h * slope1;
+                const slope2 = evalF(xn + h, yPred);
+                if (isNaN(slope2)) break;
+                
+                const yNext = yn + (h / 2) * (slope1 + slope2);
+                const xnNext = xn + h;
+                
+                if (isNaN(yNext)) break;
+                
+                results.push({
+                    n: n,
+                    xn: xn,
+                    yn: yn,
+                    slope1: slope1,
+                    yPred: yPred,
+                    slope2: slope2,
+                    xnNext: xnNext,
+                    yNext: yNext,
+                    isLast: false
+                });
+                
+                xn = xnNext;
+                yn = yNext;
+                n++;
+     
+                if (n > 10000) {
+                    console.warn("Se alcanzó el límite máximo de iteraciones");
+                    break;
+                }
+            }
+            
+            if (results.length > 0) {
+                results[results.length - 1].isLast = true;
+            }
+            
+            return results;
+        }
+        
+        function displayResults(results, equation) {
+            const container = document.getElementById('resultContainer');
+            const tableBody = document.getElementById('tableBody');
+            
+            container.style.display = 'block';
+            tableBody.innerHTML = '';
+            
+         
+            document.getElementById('iterationsCount').textContent = `${results.length} iteraciones`;
+            
+            if (results.length > 0) {
+                const finalResult = results[results.length - 1];
+                document.getElementById('finalX').textContent = finalResult.xnNext.toFixed(4);
+                document.getElementById('finalY').textContent = finalResult.yNext.toFixed(6);
+                
+               
+                const errorEstimate = Math.abs(finalResult.yPred - finalResult.yNext);
+                document.getElementById('errorEstimate').textContent = `Error estimado: ${errorEstimate.toExponential(4)}`;
+            }
+            
 
-        <section>
-            <h2>Contenido de interés</h2>
-            <p>Aquí puedes agregar 
+            results.forEach((row, index) => {
+                const tr = document.createElement('tr');
+                
+                if (row.isLast) {
+                    tr.classList.add('final-result');
+                }
+                
+                const values = [
+                    row.n,
+                    row.xn.toFixed(4),
+                    row.yn.toFixed(6),
+                    row.yPred.toFixed(6),
+                    row.xnNext.toFixed(4),
+                    row.yNext.toFixed(6)
+                ];
+                
+                values.forEach(val => {
+                    const td = document.createElement('td');
+                    td.textContent = val;
+                    tr.appendChild(td);
+                });
+                
+                tableBody.appendChild(tr);
+            });
+            
+          
+            container.scrollIntoView({behavior: 'smooth'});
+        }
+        
+        function visualizeResults(results, equation) {
+            if (results.length === 0) return;
+            
+
+            const xValues = results.map(r => r.xn);
+            xValues.push(results[results.length - 1].xnNext);
+            
+            const yValues = results.map(r => r.yn);
+            yValues.push(results[results.length - 1].yNext);
+            
+            const yPredValues = results.map(r => r.yPred);
+            
+           
+            try {
+                const traceSolution = {
+                    x: xValues,
+                    y: yValues,
+                    mode: 'lines+markers',
+                    name: 'Solución Euler Mejorado',
+                    line: {color: '#00f7ff', width: 3},
+                    marker: {size: 8, color: '#00f7ff'}
+                };
+                
+                const tracePrediction = {
+                    x: xValues.slice(0, -1),
+                    y: yPredValues,
+                    mode: 'markers',
+                    name: 'Predicciones',
+                    marker: {
+                        size: 8,
+                        color: '#ff00e4',
+                        symbol: 'x',
+                        line: {width: 2}
+                    }
+                };
+                
+                const layout2d = {
+                    //title: 'Solución de la Ecuación Diferencial',
+                    plot_bgcolor: 'rgba(10, 10, 32, 0.5)',
+                    paper_bgcolor: 'rgba(0, 0, 0, 0)',
+                    font: {color: '#e0f8ff'},
+                    xaxis: {title: 'x', gridcolor: 'rgba(0, 247, 255, 0.1)'},
+                    yaxis: {title: 'y', gridcolor: 'rgba(0, 247, 255, 0.1)'},
+                    legend: {
+                        orientation: 'h',
+                        y: 1.1,
+                        font: {size: 12}
+                    },
+                    margin: {t: 50, b: 50, l: 50, r: 50},
+                    hovermode: 'closest'
+                };
+                
+                Plotly.newPlot('graph2d', [traceSolution, tracePrediction], layout2d);
+            } catch (error) {
+                console.error("Error al crear gráfico 2D:", error);
+            }
+            
+            
+            if (results.length > 1) {
+                try {
+                    const xRange = math.range(xValues[0], xValues[xValues.length - 1], 0.1).toArray();
+                    const yRange = math.range(
+                        math.min(yValues) - 1, 
+                        math.max(yValues) + 1, 
+                        0.1
+                    ).toArray();
+                    
+                    const zData = [];
+                    const f = math.compile(equation);
+                    
+                    for (let i = 0; i < yRange.length; i++) {
+                        zData[i] = [];
+                        for (let j = 0; j < xRange.length; j++) {
+                            try {
+                                zData[i][j] = f.evaluate({x: xRange[j], y: yRange[i]});
+                            } catch {
+                                zData[i][j] = NaN;
+                            }
+                        }
+                    }
+                    
+                    const trace3d = {
+                        x: xRange,
+                        y: yRange,
+                        z: zData,
+                        type: 'surface',
+                        colorscale: 'Viridis',
+                        opacity: 0.8,
+                        contours: {
+                            z: {
+                                show: true,
+                                usecolormap: true,
+                                highlightcolor: "#ff00e4",
+                                project: {z: true}
+                            }
+                        }
+                    };
+                    
+                    const solutionTrace = {
+                        x: xValues,
+                        y: yValues,
+                        z: Array(xValues.length).fill(0),
+                        mode: 'lines',
+                        type: 'scatter3d',
+                        line: {
+                            color: '#ff5500',
+                            width: 6
+                        },
+                        name: 'Solución'
+                    };
+                    
+                    const layout3d = {
+                        title: 'Superficie de la Ecuación Diferencial',
+                        scene: {
+                            xaxis: {title: 'x', gridcolor: 'rgba(0, 247, 255, 0.1)'},
+                            yaxis: {title: 'y', gridcolor: 'rgba(0, 247, 255, 0.1)'},
+                            zaxis: {title: "f'(x,y)", gridcolor: 'rgba(0, 247, 255, 0.1)'},
+                            camera: {
+                                eye: {x: 1.5, y: 1.5, z: 0.8}
+                            }
+                        },
+                        plot_bgcolor: 'rgba(10, 10, 32, 0.5)',
+                        paper_bgcolor: 'rgba(0, 0, 0, 0)',
+                        font: {color: '#e0f8ff'},
+                        margin: {t: 50, b: 50, l: 50, r: 50}
+                    };
+                    
+                    Plotly.newPlot('graph3d', [trace3d, solutionTrace], layout3d);
+                } catch (error) {
+                    console.error("Error al crear gráfico 3D:", error);
+                }
+            }
+            
+           
+            if (results.length > 1) {
+                try {
+             
+                    const eulerResults = calculateSimpleEuler(
+                        parseFloat(document.getElementById('x0').value),
+                        parseFloat(document.getElementById('y0').value),
+                        parseFloat(document.getElementById('h').value),
+                        parseFloat(document.getElementById('xf').value),
+                        math.compile(equation)
+                    );
+                    
+                    const eulerYValues = eulerResults.map(r => r.yn);
+                    eulerYValues.push(eulerResults[eulerResults.length - 1].yNext);
+                    
+                    const traceEuler = {
+                        x: xValues,
+                        y: eulerYValues,
+                        mode: 'lines',
+                        name: 'Euler Simple',
+                        line: {color: '#ff00e4', width: 2, dash: 'dot'}
+                    };
+                    
+                    const traceImprovedEuler = {
+                        x: xValues,
+                        y: yValues,
+                        mode: 'lines',
+                        name: 'Euler Mejorado',
+                        line: {color: '#00f7ff', width: 3}
+                    };
+                    
+                    const layoutComparison = {
+                       // title: 'Comparación: Euler Simple vs. Mejorado',
+                        plot_bgcolor: 'rgba(10, 10, 32, 0.5)',
+                        paper_bgcolor: 'rgba(0, 0, 0, 0)',
+                        font: {color: '#e0f8ff'},
+                        xaxis: {title: 'x', gridcolor: 'rgba(0, 247, 255, 0.1)'},
+                        yaxis: {title: 'y', gridcolor: 'rgba(0, 247, 255, 0.1)'},
+                        legend: {
+                            orientation: 'h',
+                            y: 1.1,
+                            font: {size: 12}
+                        },
+                        margin: {t: 50, b: 50, l: 50, r: 50}
+                    };
+                    
+                    Plotly.newPlot('comparisonGraph', [traceEuler, traceImprovedEuler], layoutComparison);
+                } catch (error) {
+                    console.error("Error al crear gráfico de comparación:", error);
+                }
+            }
+        }
+        
+        function calculateSimpleEuler(x0, y0, h, xf, f) {
+            const results = [];
+            let n = 0;
+            let xn = x0;
+            let yn = y0;
+            
+            const evalF = (x, y) => {
+                try {
+                    return f.evaluate({x: x, y: y});
+                } catch {
+                    return NaN;
+                }
+            };
+            
+            while (xn < xf - 0.000001) {
+                const slope = evalF(xn, yn);
+                if (isNaN(slope)) break;
+                
+                const yNext = yn + h * slope;
+                const xnNext = xn + h;
+                
+                if (isNaN(yNext)) break;
+                
+                results.push({
+                    n: n,
+                    xn: xn,
+                    yn: yn,
+                    slope: slope,
+                    xnNext: xnNext,
+                    yNext: yNext
+                });
+                
+                xn = xnNext;
+                yn = yNext;
+                n++;
+                
+                if (n > 10000) break;
+            }
+            
+            return results;
+        }
+    </script>
+</body>
+</html>
